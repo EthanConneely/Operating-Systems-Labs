@@ -12,6 +12,8 @@ public class Client
 
 	public static void main(String args[])
 	{
+		System.out.println("\n\nClient\n\n");
+
 		Client client = new Client();
 		client.run();
 	}
@@ -69,8 +71,6 @@ public class Client
 
 	private void handleLogic() throws UnknownHostException, IOException, Exception
 	{
-		System.out.println("Client");
-
 		while (true)
 		{
 			// Handle the add or multiply request

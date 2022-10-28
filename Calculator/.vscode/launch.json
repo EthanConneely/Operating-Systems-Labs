@@ -8,13 +8,19 @@
             "type": "java",
             "name": "Launch Client",
             "request": "launch",
-            "mainClass": "Client"
+            "mainClass": "Client",
+            "presentation": {
+                "hidden": true,
+            }
         },
         {
             "type": "java",
             "name": "Launch Server",
             "request": "launch",
-            "mainClass": "ServerHost"
+            "mainClass": "Server",
+            "presentation": {
+                "hidden": true,
+            }
         }
     ],
     "compounds": [

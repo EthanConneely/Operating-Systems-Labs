@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server extends Thread
@@ -10,38 +11,65 @@ public class Server extends Thread
 	private ObjectInputStream in;
 	private String message;
 
-	public Server(Socket s)
+	public static void main(String args[])
 	{
-		socket = s;
+		System.out.println("\n\nServer\n\n");
+
+		Server server = new Server();
+		server.start();
 	}
 
+	public Server()
+	{
+	}
+
+	@Override
 	public void run()
 	{
-		try
-		{
-			out = new ObjectOutputStream(socket.getOutputStream());
-			out.flush();
-			in = new ObjectInputStream(socket.getInputStream());
-
-			handleLogic();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
+		try (ServerSocket serverSocket = new ServerSocket(2004, 10))
 		{
 			try
 			{
-				in.close();
-				out.close();
-				socket.close();
+				while (true)
+				{
+
+					System.out.println("Waiting for connection");
+					socket = serverSocket.accept();
+					System.out.println("Connection received from " + socket.getInetAddress().getHostName());
+
+					out = new ObjectOutputStream(socket.getOutputStream());
+					out.flush();
+					in = new ObjectInputStream(socket.getInputStream());
+
+					handleLogic();
+				}
+
 			}
-			catch (IOException ioException)
+			catch (Exception e)
 			{
-				ioException.printStackTrace();
+				e.printStackTrace();
+			}
+			finally
+			{
+				// 4: Closing connection
+				try
+				{
+					serverSocket.close();
+					in.close();
+					out.close();
+					socket.close();
+				}
+				catch (IOException ioException)
+				{
+					ioException.printStackTrace();
+				}
 			}
 		}
+		catch (IOException e1)
+		{
+			e1.printStackTrace();
+		}
+
 	}
 
 	private void handleLogic() throws IOException, ClassNotFoundException, Exception
