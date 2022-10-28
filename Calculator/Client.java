@@ -12,8 +12,9 @@ public class Client
 
 	public static void main(String args[])
 	{
-		System.out.println("\n\nClient\n\n");
+		System.out.println("\n\n-- Client --\n\n");
 
+		// Create and run the client
 		Client client = new Client();
 		client.run();
 	}
@@ -28,7 +29,26 @@ public class Client
 		try
 		{
 			// 1. creating a socket to connect to the server
-			socket = new Socket("127.0.0.1", 2004);
+			socket = new Socket();
+
+			// This was not done in the class just something i add that will make it so if
+			// you launch the client first it wont crash if ther server is not running
+			int count = 1;
+			while (!socket.isConnected())
+			{
+				try
+				{
+					socket.connect(new InetSocketAddress("localhost", 2004), 500);
+				}
+				catch (Exception e)
+				{
+				}
+
+				Thread.sleep(1000);
+				System.out.println("Reconnection Attempt - " + count);
+				count++;
+			}
+
 			System.out.println("Connected to localhost in port 2004");
 
 			// 2. get Input and Output streams
@@ -40,15 +60,7 @@ public class Client
 		}
 		catch (UnknownHostException unknownHost)
 		{
-			System.err.println("You are trying to connect to an unknown host!");
-		}
-		catch (IOException ioException)
-		{
-			ioException.printStackTrace();
-		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
+			System.out.println("You are trying to connect to an unknown host!");
 		}
 		catch (Exception e)
 		{
@@ -149,5 +161,4 @@ public class Client
 			ioException.printStackTrace();
 		}
 	}
-
 }

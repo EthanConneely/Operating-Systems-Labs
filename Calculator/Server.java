@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server extends Thread
+public class Server
 {
 	private Socket socket;
 	private ObjectOutputStream out;
@@ -13,17 +13,16 @@ public class Server extends Thread
 
 	public static void main(String args[])
 	{
-		System.out.println("\n\nServer\n\n");
+		System.out.println("\n\n-- Server --\n\n");
 
 		Server server = new Server();
-		server.start();
+		server.run();
 	}
 
 	public Server()
 	{
 	}
 
-	@Override
 	public void run()
 	{
 		try (ServerSocket serverSocket = new ServerSocket(2004, 10))
@@ -33,7 +32,7 @@ public class Server extends Thread
 				while (true)
 				{
 
-					System.out.println("Waiting for connection");
+					System.out.println("Waiting for new connection");
 					socket = serverSocket.accept();
 					System.out.println("Connection received from " + socket.getInetAddress().getHostName());
 
@@ -43,7 +42,6 @@ public class Server extends Thread
 
 					handleLogic();
 				}
-
 			}
 			catch (Exception e)
 			{
@@ -65,20 +63,21 @@ public class Server extends Thread
 				}
 			}
 		}
-		catch (IOException e1)
+		catch (IOException e)
 		{
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
-
 	}
 
 	private void handleLogic() throws IOException, ClassNotFoundException, Exception
 	{
 		while (true)
 		{
+			// Send the add or multiply request
 			sendMessage("Please enter 1 to Add Three Numbers or 2 to Multiply Two Number");
 			message = (String) in.readObject();
 
+			// Change the way we handle the incoming messages from the client
 			if (message.equalsIgnoreCase("1"))
 			{
 				handleAdd();
@@ -88,13 +87,14 @@ public class Server extends Thread
 				handleMul();
 			}
 
+			// Send the quit request
 			sendMessage("Would you like to quit? (yes/no)");
 			message = (String) in.readObject();
 
 			if (message.equalsIgnoreCase("yes"))
 			{
 				System.out.println("Client Disconnected!");
-				return;// close out of the connection and the infinite loop
+				return;// Close connection and wait for another client to connect
 			}
 		}
 	}
